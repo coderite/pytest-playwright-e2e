@@ -31,7 +31,7 @@ pipeline {
                     npm init -y
                     npm install newman
                     mkdir -p newman-results
-                    npx newman run api-tests/postman_api_tests.json \
+                    npx newman run postman_api_tests.json \
                         --reporters cli,junit \
                         --reporter-junit-export newman-results/results.xml
                 '''
