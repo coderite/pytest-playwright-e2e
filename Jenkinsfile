@@ -9,7 +9,7 @@ pipeline {
             post {
                 success {
                     script {
-                        currentBuild.result = "I LIKE TURTLES"
+                        currentBuild.result = "SUCCESS"
                     }
                 }
             }
