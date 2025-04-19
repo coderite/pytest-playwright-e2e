@@ -30,10 +30,8 @@ pipeline {
                 echo "Running newman..."
                 sh '''
                     ls -R .
-                    npm init -y
-                    npm install newman
                     mkdir -p newman-results
-                    npx newman run postman_api_tests.json \
+                    newman run postman_api_tests.json \
                         --reporters cli,junit \
                         --reporter-junit-export newman-results/results.xml
                 '''
