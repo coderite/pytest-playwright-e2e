@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout PR') {
-            steps {
-                checkout scm
-            }
-        }
+        //stage('Checkout PR') {
+        //    steps {
+        //        checkout scm
+        //    }
+        //}
 
         stage('Fetch Postman Tests') {
             steps {
