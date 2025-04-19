@@ -18,7 +18,7 @@ pipeline {
 
                 git(
                     url: "https://github.com/coderite/api-tests",
-                    credentialsId: 'github-app',
+                    credentialsId: 'a0f751a3-494c-4a2a-8c6e-93e18a89f0fe',
                     branch: 'main'
                 )
             }
