@@ -29,7 +29,6 @@ pipeline {
             steps {
                 echo "Running newman..."
                 sh '''
-                    ls -R .
                     mkdir -p newman-results
                     newman run postman_api_tests.json \
                         --reporters cli,junit \
