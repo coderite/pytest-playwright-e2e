@@ -1,23 +1,52 @@
 pipeline {
     agent any
+
     stages {
-        stage('Deploy') {
+        stage('Checkout PR') {
             steps {
-                echo 'Hello from the pytest-playwright-e2e repo!'
-                echo "Build number: ${currentBuild.number}"
+                checkout scm
             }
+        }
+
+        stage('Fetch Postman Tests') {
+            steps {
+                echo "Cloning Postman collection repo..."
+
+                git(
+                    url: "https://github.com/coderite/api-tests",
+                    credentialsId: 'github-app',
+                    branch: 'main'
+                )
+            }
+        }
+
+        stage('Run API Tests') {
+            steps {
+                echo "Running newman against PR..."
+                sh '''
+                    npm init -y
+                    npm install newman
+                    mkdir -p newman-results
+                    npx newman run api-tests/postman_api_tests.json \
+                        --reporters cli,junit \
+                        --reporter-junit-export newman-results/results.xml
+                '''
+            }
+
             post {
-                success {
-                    script {
-                        currentBuild.result = "SUCCESS"
-                    }
+                always {
+                    junit 'newman-results/results.xml'
                 }
             }
         }
     }
-    post {
-        always {
-            echo currentBuild.currentResult
-        }
+
+  post {
+    success {
+      echo "🎉 All API tests passed! PR is clear to merge."
     }
+    failure {
+      echo "❌ Some API tests failed — build is FAILED, PR stays blocked."
+    }
+  }
 }
