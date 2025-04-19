@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'nodejs'
-    }
-
     stages {
         stage('Checkout PR') {
             steps {
@@ -15,7 +11,6 @@ pipeline {
         stage('Fetch Postman Tests') {
             steps {
                 echo "Cloning Postman collection repo..."
-
                 git(
                     url: "https://github.com/coderite/api-tests",
                     credentialsId: 'a0f751a3-494c-4a2a-8c6e-93e18a89f0fe',
@@ -25,9 +20,16 @@ pipeline {
         }
 
         stage('Run API Tests') {
+            agent {
+                docker {
+                    image 'postman/newman:latest'
+                    args '-u root:root'
+                }
+            }
             steps {
-                echo "Running newman against PR..."
+                echo "Running newman..."
                 sh '''
+                    ls -R .
                     npm init -y
                     npm install newman
                     mkdir -p newman-results
