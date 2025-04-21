@@ -1,0 +1,21 @@
+pipeline {
+    agent {
+        docker { image 'postman/newman:latest' }
+    }
+
+    stages {
+        stage('Checkout') {
+           steps {
+               echo "Hello Docker!"
+           }
+        }
+    }
+    post {
+        success {
+            echo "IT WORKED!"
+        }
+        failure {
+            echo "IT DID NOT WORK!"
+        }
+    }
+}
