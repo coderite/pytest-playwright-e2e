@@ -48,15 +48,15 @@ pipeline {
                         --reporter-junit-export newman-results/results.xml
                 '''
             }
-
             post {
                 success {
                     echo "API TEST NEWMAN RUN SUCCESS!"
                 }
                 failure {
-                    echo "PI TEST NEWMAN RUN FAILED!"
+                    echo "API TEST NEWMAN RUN FAILED!"
                 }
                 always {
+                    echo "API TEST ALWAYS"
                     junit 'newman-results/results.xml'
                 }
             }
