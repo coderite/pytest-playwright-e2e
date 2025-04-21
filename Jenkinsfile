@@ -22,6 +22,14 @@ pipeline {
                     branch: 'main'
                 )
             }
+            post {
+                success {
+                    echo "GITHUB REPO WITH POSTMAN TEST CLONED SUCCESSFULLY!"
+                }
+                failure {
+                    echo "GITHUB REPO CLONING FAILED!"
+                }
+            }
         }
 
         stage('Run API Tests') {
