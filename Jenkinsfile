@@ -1,12 +1,17 @@
 pipeline {
     agent any
 
+    environment {
+        MY_SECRET = credentials('MY_SECRET')
+    }
+
     stages {
-        //stage('Checkout PR') {
-        //    steps {
-        //        checkout scm
-        //    }
-        //}
+        stage('Checkout PR') {
+           steps {
+               echo "Printing out the secret credentials: ${MY_SECRET}"
+               checkout scm
+           }
+        }
 
         stage('Fetch Postman Tests') {
             steps {
