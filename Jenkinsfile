@@ -56,7 +56,6 @@ pipeline {
                     echo "API TEST NEWMAN RUN FAILED!"
                 }
                 always {
-                    echo "API TEST ALWAYS"
                     junit 'newman-results/results.xml'
                 }
             }
