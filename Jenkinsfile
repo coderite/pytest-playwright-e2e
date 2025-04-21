@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout PR') {
            steps {
-               echo "Printing out the secret credentials: ${MY_SECRET}"
+               echo 'Printing out the secret credentials: {MY_SECRET}'
                checkout scm
            }
         }
