@@ -14,7 +14,7 @@ pipeline{
     stages{
         stage('Fetch Postman Tests') {
             steps {
-                echo "Cloning Postman collection repo..."
+                echo "Cloning Postman collectiond repo..."
                 git(
                     url: "https://github.com/coderite/api-tests",
                     credentialsId: 'github-app',
