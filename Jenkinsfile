@@ -23,7 +23,7 @@ pipeline{
             }
             post {
                 success {
-                    echo "GITHUB REPO WITH POSTMAN TEST CLONED SUCCESSFULLY!"
+                    echo "GITHUB REPO WITH A POSTMAN TEST CLONED SUCCESSFULLY!"
                     setBuildStatus("Build succeeded", "SUCCESS");
                 }
                 failure {
