@@ -50,6 +50,12 @@ pipeline {
             }
 
             post {
+                success {
+                    echo "API TEST NEWMAN RUN SUCCESS!"
+                }
+                failure {
+                    echo "PI TEST NEWMAN RUN FAILED!"
+                }
                 always {
                     junit 'newman-results/results.xml'
                 }
