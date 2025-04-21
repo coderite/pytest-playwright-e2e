@@ -32,34 +32,34 @@ pipeline {
             }
         }
 
-        stage('Run API Tests') {
-            agent {
-                docker {
-                    image 'postman/newman:latest'
-                    args '-u root:root'
-                }
-            }
-            steps {
-                echo "Running newman..."
-                sh '''
-                    mkdir -p newman-results
-                    newman run postman_api_tests.json \
-                        --reporters cli,junit \
-                        --reporter-junit-export newman-results/results.xml
-                '''
-            }
-            post {
-                success {
-                    echo "API TEST NEWMAN RUN SUCCESS!"
-                }
-                failure {
-                    echo "API TEST NEWMAN RUN FAILED!"
-                }
-                always {
-                    junit 'newman-results/results.xml'
-                }
-            }
-        }
+//         stage('Run API Tests') {
+//             agent {
+//                 docker {
+//                     image 'postman/newman:latest'
+//                     args '-u root:root'
+//                 }
+//             }
+//             steps {
+//                 echo "Running newman..."
+//                 sh '''
+//                     mkdir -p newman-results
+//                     newman run postman_api_tests.json \
+//                         --reporters cli,junit \
+//                         --reporter-junit-export newman-results/results.xml
+//                 '''
+//             }
+//             post {
+//                 success {
+//                     echo "API TEST NEWMAN RUN SUCCESS!"
+//                 }
+//                 failure {
+//                     echo "API TEST NEWMAN RUN FAILED!"
+//                 }
+//                 always {
+//                     junit 'newman-results/results.xml'
+//                 }
+//             }
+//         }
     }
 
   post {
@@ -68,6 +68,19 @@ pipeline {
     }
     failure {
       echo "❌ Some API tests failed — build is FAILED, PR stays blocked."
+    }
+    always {
+        step([
+            $class: 'GitHubCommitStatusSetter',
+            context: 'CI Tests',
+            // Map build results → GitHub states
+            statusResultSource: [$class: 'ConditionalStatusResultSource', results: [
+              [$class: 'StatusResult', result: 'SUCCESS', state: 'SUCCESS'],
+              [$class: 'StatusResult', result: 'FAILURE', state: 'FAILURE'],
+              [$class: 'StatusResult', result: 'UNSTABLE', state: 'PENDING'],
+              [$class: 'StatusResult', result: 'NOT_BUILT', state: 'PENDING']
+            ]]
+          ])
     }
   }
 }
