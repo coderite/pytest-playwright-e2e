@@ -63,7 +63,7 @@ pipeline {
 
   post {
     success {
-      echo "🎉 All API tests passed! PR is clear to merge."
+      echo "🎉 All API tests passed! PR is cleared to merge."
     }
     failure {
       echo "❌ Some API tests failed — build is FAILED, PR stays blocked."
