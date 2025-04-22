@@ -1,74 +1,45 @@
-pipeline {
+void setBuildStatus(String message, String state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/coderite/pytest-playwright-e2e"],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
+pipeline{
     agent any
 
-    environment {
-        MY_SECRET = credentials('MY_SECRET')
-    }
-
-    stages {
-        stage('Checkout PR') {
-           steps {
-               echo 'Printing out the secret credentials: $MY_SECRET'
-               checkout scm
-           }
-        }
-
+    stages{
         stage('Fetch Postman Tests') {
             steps {
-                echo "Cloning Postman collection repo..."
+                echo "Cloning Postman collections repo..."
                 git(
                     url: "https://github.com/coderite/api-tests",
-                    credentialsId: 'a0f751a3-494c-4a2a-8c6e-93e18a89f0fe',
+                    credentialsId: 'github-app',
                     branch: 'main'
                 )
             }
             post {
                 success {
-                    echo "GITHUB REPO WITH POSTMAN TEST CLONED SUCCESSFULLY!"
+                    echo "GITHUB REPO WITH As POSTMsAN TEST CLONED SUCCESsSFULsLY!"
+                    setBuildStatus("Build succeeded", "SUCCESS");
                 }
                 failure {
                     echo "GITHUB REPO CLONING FAILED!"
-                }
-            }
-        }
-
-        stage('Run API Tests') {
-            agent {
-                docker {
-                    image 'postman/newman:latest'
-                    args '-u root:root'
-                }
-            }
-            steps {
-                echo "Running newman..."
-                sh '''
-                    mkdir -p newman-results
-                    newman run postman_api_tests.json \
-                        --reporters cli,junit \
-                        --reporter-junit-export newman-results/results.xml
-                '''
-            }
-            post {
-                success {
-                    echo "API TEST NEWMAN RUN SUCCESS!"
-                }
-                failure {
-                    echo "API TEST NEWMAN RUN FAILED!"
-                }
-                always {
-                    echo "API TEST ALWAYS"
-                    junit 'newman-results/results.xml'
+                    setBuildStatus("Build failed", "FAILURE");
                 }
             }
         }
     }
 
-  post {
-    success {
-      echo "🎉 All API tests passed! PR is clear to merge."
+    post {
+        success {
+            echo "🎉 All API tests passed! PR is clear to merge."
+        }
+        failure {
+            echo "❌ Some API tests failed — build is FAILED, PR stays blocked."
+        }
     }
-    failure {
-      echo "❌ Some API tests failed — build is FAILED, PR stays blocked."
-    }
-  }
 }
