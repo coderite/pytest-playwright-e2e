@@ -12,6 +12,17 @@ pipeline{
     agent any
 
     stages{
+        stage('Build') {
+            steps {
+                script {
+                    githubNotify context: 'build', status: 'PENDING'
+                }
+                sh 'echo building...'
+                script {
+                    githubNotify context: 'build', status: 'SUCCESS'
+                }
+            }
+        }
         stage('Fetch Postman Tests') {
             steps {
                 echo "Cloning Postman collections repo..."
